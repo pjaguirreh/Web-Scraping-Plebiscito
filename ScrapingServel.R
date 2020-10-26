@@ -1,6 +1,7 @@
 library(RSelenium)
 library(tidyverse)
 library(rvest)
+library(openxlsx)
 
 comunas_web <- read_html("https://es.wikipedia.org/wiki/Anexo:Comunas_de_Chile")
 
@@ -81,4 +82,19 @@ for (i in seq_along(region_comuna$inicial)){
 
 names(datos_comuna) <- c("Comuna", "Apruebo", "Rechazo")
 
-datos_comuna
+datos_comuna_fin <- datos_comuna %>% 
+  mutate(Total = Apruebo+Rechazo,
+         Apruebo_per = (Apruebo/Total)*100,
+         Rechazo_per = (Rechazo/Total)*100) %>% 
+  dplyr::arrange(Comuna)
+
+datos_comuna_fin %>% 
+  bind_cols(
+region_comuna %>% 
+  dplyr::arrange(comuna) %>% 
+  dplyr::select(region) %>% 
+  mutate(region = str_to_upper(region)) %>% 
+  dplyr::rename("Region" = region)
+) %>% 
+  dplyr::select(Region, everything()) %>% 
+  dplyr::arrange(Region, Comuna) %>% write_csv("C:/Users/pjagu/OneDrive/Documentos/GitHub/Web Scraping Plebiscito/DatosPlebiscito.csv")
