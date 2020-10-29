@@ -21,7 +21,7 @@ rd <- remDr$client
 
 # Ir a la web del SERVEL
 url <- 'http://www.servelelecciones.cl/'
-rd$open()
+#rd$open()
 rd$navigate(url)
 
 # Ir a la pag específica de la extracción
@@ -29,15 +29,10 @@ rd$findElement(using = "css",
                value = "body > div.container.body.ng-scope > div:nth-child(1) > div.col-md-3.margen_cero.visible-desktop.visible-tablet > div > ul > li:nth-child(3) > a"
 )$clickElement()
 
-##########################
-# Crear listas de comuna #
-##########################
-
-# Objeto que identifica la lista de comunas
-webElemComuna <- rd$findElement(using = "css", 
-               value = "#selComunas")
-
-# Función de ayuda (se usará para lista de circunscripciones, locales, y mesas)
+#####################################
+# Crear listas de regiones y comuna #
+#####################################
+# Función de ayuda (se usará para lista de regiones, comunas, circunscripciones, locales, y mesas)
 limpiar_lista <- function(x){
   x %>% 
     str_extract_all(">(.*?)<") %>% 
@@ -51,21 +46,48 @@ limpiar_lista <- function(x){
     arrange(inicial)
 }
 
-# Generar lista de comunas
-lista_comunas <- webElemComuna$getElementAttribute("outerHTML") %>% 
+# Objeto que identifica la lista de regiones y comunas
+webElemRegion <- rd$findElement(using = "css", 
+                                value = "#selRegion")
+
+# Extraer lista y limpiar
+lista_regiones <- webElemRegion$getElementAttribute("outerHTML") %>% 
   limpiar_lista()
 
-regiones_comunas <- read_csv("reg_com.csv")
+# Extraer lista de comunas para cada región
+reg_com <- tibble()
+for (r in seq_along(lista_regiones$inicial)){
+  
+  # inicial de la region
+  ini_reg <- lista_regiones$inicial[r]
+  
+  Sys.sleep(0.5)
+  
+  # insertar inicial en menú desplegable de web
+  webElemRegion <- rd$findElement(using = "css", 
+                                  value = "#selRegion")
+  webElemRegion$sendKeysToElement(list(ini_reg))
+  
+  Sys.sleep(0.5)
+  
+  # Generar lista de comunas
+  webElemComuna <- rd$findElement(using = "css", 
+                                  value = "#selComunas")
+  lista_comunas <- webElemComuna$getElementAttribute("outerHTML") %>% 
+    limpiar_lista()
+  
+  Sys.sleep(0.5)
+  
+  com_r <- lista_comunas %>% 
+    mutate(reg = lista_regiones$nombre[r])
+  
+  Sys.sleep(0.5)
+  
+  reg_com <- bind_rows(reg_com, com_r)
+}
 
-lista_comunas <- lista_comunas %>% 
-  mutate(nombre2 = str_replace_all(nombre, "Ñ", "N")) %>% 
-  left_join(regiones_comunas, by = c("nombre2" = "Comuna")) %>%
-  distinct(Region, nombre)
-
-lista_comunas <- lista_comunas %>% 
-  filter(Region == "METROPOLITANA DE SANTIAGO") %>% 
-  mutate(inicial = str_sub(nombre, 1, 1)) %>% 
-  arrange(inicial)
+reg_com <- reg_com %>% 
+  select(-inicial)
 
 ## EXTRAER INFORMACIÓN
 # Este loop itera comuna>circunscripción>local>mesa
@@ -178,8 +200,8 @@ for (i in seq_along(lista_comunas$inicial)){ # ITERACIÓN DE COMUNAS
         resultados[contar_fila, 4] <- lista_mesas$nombre[k]
         resultados[contar_fila, 5] <- apruebo
         resultados[contar_fila, 6] <- rechazo
-        resultados[contar_fila, 7] <- nulo
-        resultados[contar_fila, 8] <- blanco
+        #resultados[contar_fila, 7] <- nulo
+        #resultados[contar_fila, 8] <- blanco
         
         # Para evaluar avance
         resultados %>% slice(contar_fila) %>% print()
@@ -204,11 +226,6 @@ for (i in seq_along(lista_comunas$inicial)){ # ITERACIÓN DE COMUNAS
   
 }
 
-# SE CORTÓ EN COBUN
-# SE CORTÓ EN COLLIPULLI
-# SE CORTÓ EN COQUIMBO
-# SE CORTÓ EN CUNCO
-
 # Ajustar data frame
 resultados %>% 
   rename("Comuna" = 1,
@@ -217,11 +234,12 @@ resultados %>%
          "Mesa" = 4,
          "Apruebo" = 5,
          "Rechazo" = 6,
-         "Nulo" = 7,
-         "Blanco" = 8) %>% write_excel_csv("DatosPlebiscitoMesaRM.csv")
-
-
-
+         #"Nulo" = 7,
+         #"Blanco" = 8
+         ) %>%
+  left_join(reg_com, by = c("Comuna" = "nombre")) %>% 
+  select(Region = reg, everything()) %>% 
+  write_excel_csv("DatosPlebiscitoMesaRM.csv")
 
 
 rd$closeServer();rd$close();remDr$server$stop()
