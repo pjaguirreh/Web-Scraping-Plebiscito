@@ -490,4 +490,3 @@ resultados %>%
 
 
 rd$closeServer();rd$close();remDr$server$stop()
->>>>>>> ffbd0d932a30e84b8429cef2b989beb6736d18a7
