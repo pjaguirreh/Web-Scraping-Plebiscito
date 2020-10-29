@@ -226,7 +226,7 @@ for (i in seq_along(lista_comunas$inicial)){ # ITERACIÓN DE COMUNAS
   
 }
 
-# Ajustar data frame
+# Ajustar y exportar data frame
 resultados %>% 
   rename("Comuna" = 1,
          "Circunscripción" = 2,
@@ -239,7 +239,8 @@ resultados %>%
          ) %>%
   left_join(reg_com, by = c("Comuna" = "nombre")) %>% 
   select(Region = reg, everything()) %>% 
-  write_excel_csv("DatosPlebiscitoMesaRM.csv")
+  arrange(Region, Comuna, `Circunscripción`, Local)  %>% 
+  write_excel_csv("DatosPlebiscitoMesa.csv")
 
 
 rd$closeServer();rd$close();remDr$server$stop()
