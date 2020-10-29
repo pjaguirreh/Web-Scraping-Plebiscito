@@ -1,0 +1,4 @@
+EARTHENGINE_INIT_MESSAGE="True"
+EARTHENGINE_PYTHON="C:\Users\pjagu\AppData\Local\r-miniconda\envs\rgee\python.exe"
+EARTHENGINE_ENV="rgee"
+GGMAP_GOOGLE_API_KEY=AIzaSyAmy1ZcrjqgTMTFTSK1Az9b3C42aInpQSc
