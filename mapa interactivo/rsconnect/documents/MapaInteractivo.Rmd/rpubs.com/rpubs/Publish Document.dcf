@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/683737/fd2eb7ed2e0749a2bf9fad8945599034
+bundleId: https://api.rpubs.com/api/v1/document/683737/fd2eb7ed2e0749a2bf9fad8945599034
+url: http://rpubs.com/pjaguirreh/683737
+when: 1604086001.83219

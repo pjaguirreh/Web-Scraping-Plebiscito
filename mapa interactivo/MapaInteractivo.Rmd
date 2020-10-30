@@ -1,0 +1,34 @@
+---
+title: "Votaciones RM por local de votación"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, error = FALSE)
+```
+
+[Repositorio](https://github.com/pjaguirreh/Web-Scraping-Plebiscito)
+
+```{r}
+library(leaflet)
+library(tidyverse)
+library(readxl)
+
+datos_rm <- read_excel("datos_juanizio.xlsx")
+```
+
+```{r}
+leaflet(data = datos_rm) %>% 
+  addTiles() %>% 
+  addMarkers(~lon, ~lat, popup = ~paste0("Apruebo: ", paste0(as.character(round(P_APR*100,1)), "%"),
+                                         " - ",
+                                         "Rechazo: ", paste0(as.character(round(P_REC*100,1))), "%"), 
+             label = ~as.character(Local))
+```
+
+
+
+
+

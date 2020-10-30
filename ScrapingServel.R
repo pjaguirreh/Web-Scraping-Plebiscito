@@ -172,7 +172,7 @@ datos_comuna %>%
   select(Region, Comuna, Total, Validos, Apruebo, Rechazo, Nulo, Blanco, 
          Validos_per, Apruebo_per, Rechazo_per, Nulo_per, Blanco_per) %>% 
   dplyr::arrange(Region, Comuna) %>% 
-  write_excel_csv("DatosPlebiscito.csv")
+  write_excel_csv("datos/DatosPlebiscito.csv")
 
 rd$closeServer();rd$close();remDr$server$stop()
 

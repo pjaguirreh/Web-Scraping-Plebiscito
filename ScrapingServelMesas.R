@@ -239,7 +239,7 @@ resultados %>%
   left_join(reg_com, by = c("Comuna" = "nombre")) %>% 
   select(Region = reg, everything(), -inicial) %>% 
   arrange(Region, Comuna, `Circunscripción`, Local)  %>% 
-  write_excel_csv("DatosPlebiscitoMesa.csv")
+  write_excel_csv("datos/DatosPlebiscitoMesa.csv")
 
 
 rd$closeServer();rd$close();remDr$server$stop()
