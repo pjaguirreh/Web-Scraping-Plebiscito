@@ -26,8 +26,9 @@ rd$navigate(url)
 
 # Ir a la pag específica de la extracción
 rd$findElement(using = "css", 
-               value = "body > div.container.body.ng-scope > div:nth-child(1) > div.col-md-3.margen_cero.visible-desktop.visible-tablet > div > ul > li:nth-child(3) > a"
+               value = ".menu_division > li:nth-child(3) > a:nth-child(1)"
 )$clickElement()
+# body > div.container.body.ng-scope > div:nth-child(1) > div.col-md-3.margen_cero.visible-desktop.visible-tablet > div > ul > li:nth-child(3) > a
 
 #####################################
 # Crear listas de regiones y comuna #
@@ -92,6 +93,13 @@ reg_com <- reg_com %>%
 ## ---------------------------------
 ## GENERAR DATA FRAME CON RESULTADOS
 ## ---------------------------------
+
+rd$navigate(url)
+
+# Ir a la pag específica de la extracción
+rd$findElement(using = "css", 
+               value = ".menu_division > li:nth-child(3) > a:nth-child(1)"
+)$clickElement()
 
 datos_comuna <- tibble() # data frame que almacenará resultados
 for (i in seq_along(reg_com$inicial)){
