@@ -20,7 +20,7 @@ remDr <- rsDriver(
 rd <- remDr$client
 
 # Ir a la web del SERVEL
-url <- 'http://www.servelelecciones.cl/'
+url <- 'https://pv.servelelecciones.cl/'
 #rd$open()
 rd$navigate(url)
 
